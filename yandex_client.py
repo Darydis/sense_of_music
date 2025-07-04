@@ -1,6 +1,7 @@
 from yandex_music import Client
 
 client = Client().init()
+client.region = "ru_RU"
 
 def get_playlist(username: str, playlist_id: str) -> str:
     # Правильный вызов метода клиента
