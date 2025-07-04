@@ -16,7 +16,7 @@ async def handle_link(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if not match:
         await update.message.reply_text(
             "❌ Неверная ссылка. Отправьте в формате:\n" +
-            "https://music.yandex.com/users/USERNAME/playlists/ID"
+            "https://music.yandex.ru/users/USERNAME/playlists/ID"
         )
         return
     username = match.group("username")
