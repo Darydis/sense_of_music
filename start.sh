@@ -1,16 +1,16 @@
 #!/usr/bin/env bash
 set -euo pipefail
+set -x
 
-: "${PORT:?PORT must be set by platform}"  # без $PORT сразу падаем (удобно диагностировать)
-echo "BOT_TOKEN задан? ${BOT_TOKEN:+yes}"
+# порт от платформы, по умолчанию 8000 (на всякий)
+PORT=${PORT:-8000}
+export PORT
+echo "BOT_TOKEN set? ${BOT_TOKEN:+yes}"
 
-echo "PORT=${PORT:-8000}"
-: "${PORT:=8000}"   # если платформа не проставит, используем 8000
-
-# лёгкий health-server, чтобы платформа видела открытый порт
+# лёгкий health сервер, чтобы платформа видела открытый порт
 python - <<'PY' &
 import os, http.server, socketserver, json
-port = int(os.getenv("PORT"))
+port = int(os.getenv("PORT", "8000"))
 class H(http.server.BaseHTTPRequestHandler):
     def do_GET(self):
         self.send_response(200); self.send_header("Content-Type","application/json")
@@ -19,5 +19,5 @@ class H(http.server.BaseHTTPRequestHandler):
 with socketserver.TCPServer(("", port), H) as srv: srv.serve_forever()
 PY
 
-# запускаем polling-бота (замени имя файла, если другое)
-exec python bot.py
+# запускаем бота в ФОРЕГРАУНДЕ и без буферизации (лог трейсбеков в stdout)
+python -u bot.py || { echo "bot crashed with code $?"; sleep 600; exit 1; }
