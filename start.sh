@@ -1,9 +1,11 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-echo "PORT=${PORT:-unset}"
 : "${PORT:?PORT must be set by platform}"  # без $PORT сразу падаем (удобно диагностировать)
 echo "BOT_TOKEN задан? ${BOT_TOKEN:+yes}"
+
+echo "PORT=${PORT:-8000}"
+: "${PORT:=8000}"   # если платформа не проставит, используем 8000
 
 # лёгкий health-server, чтобы платформа видела открытый порт
 python - <<'PY' &
