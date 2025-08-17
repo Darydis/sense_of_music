@@ -7,6 +7,36 @@ PORT=${PORT:-8000}
 export PORT
 echo "BOT_TOKEN set? ${BOT_TOKEN:+yes}"
 
+python - <<'PY'
+import os, socket, urllib.parse
+u = urllib.parse.urlparse(os.getenv("proxy_url",""))
+host, port = u.hostname, u.port
+print("Proxy target:", host, port)
+try:
+    s=socket.create_connection((host,port), timeout=5)
+    print("Proxy TCP: OK")
+    s.close()
+except Exception as e:
+    print("Proxy TCP: FAIL ->", e)
+PY
+
+python - <<'PY'
+import os, httpx
+px = os.getenv("proxy_url")
+try:
+    r = httpx.get(
+      "https://api.openai.com/v1/models",
+      headers={"Authorization":"Bearer INVALID"},  # спецом
+      proxies={"http": px, "https": px},
+      timeout=httpx.Timeout(10, connect=10, read=10, write=10, pool=10),
+      trust_env=False,
+    )
+    print("OpenAI via proxy ->", r.status_code, r.text[:80])
+except Exception as e:
+    print("OpenAI via proxy FAIL ->", type(e).__name__, e)
+PY
+
+
 # лёгкий health сервер, чтобы платформа видела открытый порт
 python - <<'PY' &
 import os, http.server, socketserver, json
