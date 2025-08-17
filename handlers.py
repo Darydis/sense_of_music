@@ -44,11 +44,12 @@ async def process_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
         return
 
     # Отправляем текст в ChatGPT и ждем ответ
-    await update.message.reply_text("🤖 Отправка данных в ChatGPT...")
     result = await ask_chatgpt(playlist_text)
+    logging.info("result", result)
 
     # Выводим результат пользователю
-    await update.message.reply_text(result)
+    await update.message.reply_text("Обработка..")
+    await update.message.reply_text(result, parse_mode='HTML')
 
 
 

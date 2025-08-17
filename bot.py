@@ -8,8 +8,10 @@ from telegram.ext import Application, CommandHandler, MessageHandler, filters
 import handlers
 
 URL_PATTERN = re.compile(
-    r"^https://music\.yandex\.ru/users/(?P<username>[A-Za-z0-9_-]+)/playlists/(?P<playlist_id>\d+)(?:\?.*)?$"
+    r"^https?://music\.yandex\.(?:com|ru)/users/(?P<username>[^/]+)/playlists/(?P<playlist_id>\d+)(?:\?.*)?$",
+    re.IGNORECASE,
 )
+
 
 def main() -> None:
     load_dotenv()
