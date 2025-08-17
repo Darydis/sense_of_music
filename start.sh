@@ -1,6 +1,9 @@
 #!/bin/bash
 set -xeuo pipefail
 
+set -xe
+echo "PORT=${PORT:-unset}"
+
 # показать, что видит платформа
 echo "PORT=${PORT:-unset}"
 echo "BOT_TOKEN задан? ${BOT_TOKEN:+yes}"
