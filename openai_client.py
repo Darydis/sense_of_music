@@ -17,7 +17,7 @@ proxy_url = os.getenv("proxy_url")
 transport = httpx.HTTPTransport(proxy=proxy_url, retries=3)
 client    = httpx.Client(
     transport=transport,
-    timeout=httpx.Timeout(connect=15, read=45, write=45),
+    timeout=httpx.Timeout(45.0, connect=15.0, read=45.0, write=45.0),
     trust_env=False,
 )
 
