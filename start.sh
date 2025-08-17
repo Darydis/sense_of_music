@@ -1,17 +1,11 @@
-#!/bin/bash
-set -xeuo pipefail
+#!/usr/bin/env bash
+set -euo pipefail
 
-set -xe
 echo "PORT=${PORT:-unset}"
-
-# показать, что видит платформа
-echo "PORT=${PORT:-unset}"
+: "${PORT:?PORT must be set by platform}"  # без $PORT сразу падаем (удобно диагностировать)
 echo "BOT_TOKEN задан? ${BOT_TOKEN:+yes}"
 
-# если $PORT не задан — лучше фейлить, чтобы сразу понять причину
-: "${PORT:?PORT must be set by platform}"
-
-# health-сервер в фоне (как у тебя)
+# лёгкий health-server, чтобы платформа видела открытый порт
 python - <<'PY' &
 import os, http.server, socketserver, json
 port = int(os.getenv("PORT"))
@@ -23,5 +17,5 @@ class H(http.server.BaseHTTPRequestHandler):
 with socketserver.TCPServer(("", port), H) as srv: srv.serve_forever()
 PY
 
-# сам бот
+# запускаем polling-бота (замени имя файла, если другое)
 exec python bot.py
